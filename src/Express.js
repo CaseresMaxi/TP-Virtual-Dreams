@@ -7,7 +7,6 @@ const { throws } = require('assert');
 const { type } = require('os');
 /////////////////////////////////////////
 
-////////////////////////////////////////
 const app = express();
 app.use(express.json());
 app.use(bodyparser.urlencoded({ extended: true }));
@@ -22,7 +21,7 @@ app.get('/', (req, res) => {
     res.sendFile(path.resolve(__dirname, "crearPersonas.html"))
 });
 
-//////////////////////////////////////
+///////////////////////////////////////
 app.post('/', (req, res) => {
     var codigoEstado = 201;
     dni_n = parseInt(req.body.dni);
@@ -44,7 +43,12 @@ app.post('/', (req, res) => {
                         json: true
                     };
 
-                    res.sendFile(path.resolve(__dirname, "crearPersonas.html"))
+                    //res.status(codigoEstado).sendFile(path.resolve(__dirname, "crearPersonas.html"))
+                    res.status(codigoEstado).send({
+                        nombre:req.body.nombre,
+                        apellido: req.body.apellido,
+                        dni: dni_n
+                    })
                     rp(options)
                         .then(function (respuesta) {
 
@@ -55,28 +59,17 @@ app.post('/', (req, res) => {
                 } else {
 
                     codigoEstado = 400 //json invalido
-                    if (req.body.apellido != "undefined") {
 
-                        throw new Error("el campo de APELLIDO es obligatorio");
-                    }
-                    if (typeof req.body.apellido != 'string') {
-
-                        throw new Error(" el formato del APELLIDO es incorrecto");
-                    }
+                    throw new Error("APELLIDO invalido");
+                    
                 }
             } else {
                 codigoEstado = 400 // json invalido
 
-                if (req.body.apellido != "undefined") {
-
-                    throw new Error("el campo de DNI es obligatorio");
-                }
-                if (dni_n > 999999999) {
-
-                    throw new Error("el DNI deve tener menos de 10 caracteres");
-                }
-            }
+                throw new Error("DNI invalido");
+                
         }
+    }
         else {
             throw new Error("Denasiados argumentos");
         }
